@@ -1,70 +1,62 @@
-const Course = require("../models/Course");
-const Instructor = require("../models/Instructor");
+const Course = require("../models/Course")
+const Instructor = require("../models/Instructor")
 
-// BONUS: Cannot create course with non-existent instructor
-exports.createCourse = async (req, res) => {
-  try {
-    const { instructor } = req.body;
-
-    const exists = await Instructor.findById(instructor);
-    if (!exists) {
-      return res.status(400).json({ error: "Cannot create a course with a non-existent instructor" });
-    }
-
-    const course = await Course.create(req.body);
-    res.status(201).json(course);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+const getInstructors = async () => {
+  const instructors = await Instructor.find()
+  return instructors
+}
 
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate("instructor");
-    res.json(courses);
+    const courses = await Course.find().populate("instructor")
+    const instructors = await getInstructors()
+    res.render("courses/index.ejs", { courses, instructors })
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.send("something went wrong")
   }
-};
+}
 
 exports.getCourseById = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id).populate("instructor");
-    if (!course) return res.status(404).json({ error: "Course not found" });
-    res.json(course);
-  } catch {
-    res.status(400).json({ error: "Invalid course id" });
+    const course = await Course.findById(req.params.id).populate("instructor")
+    if (!course) return res.send("course not found")
+    res.render("courses/show.ejs", { course })
+  } catch (err) {
+    res.send("invalid id")
   }
-};
+}
+
+exports.createCourse = async (req, res) => {
+  try {
+    const inst = await Instructor.findById(req.body.instructor)
+    if (!inst) return res.send("instructor not found")
+
+    await Course.create(req.body)
+    res.redirect("/courses")
+  } catch (err) {
+    res.send("cannot create course")
+  }
+}
 
 exports.updateCourse = async (req, res) => {
   try {
-    // BONUS: if instructor updated, validate existence
     if (req.body.instructor) {
-      const exists = await Instructor.findById(req.body.instructor);
-      if (!exists) {
-        return res.status(400).json({ error: "Cannot update: instructor not found" });
-      }
+      const inst = await Instructor.findById(req.body.instructor)
+      if (!inst) return res.send("instructor not found")
     }
 
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    }).populate("instructor");
-
-    if (!course) return res.status(404).json({ error: "Course not found" });
-    res.json(course);
+    await Course.findByIdAndUpdate(req.params.id, req.body)
+    res.redirect("/courses/" + req.params.id)
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.send("cannot update course")
   }
-};
+}
 
 exports.deleteCourse = async (req, res) => {
   try {
-    const course = await Course.findByIdAndDelete(req.params.id);
-    if (!course) return res.status(404).json({ error: "Course not found" });
-    res.json({ message: "Course deleted" });
-  } catch {
-    res.status(400).json({ error: "Invalid course id" });
+    await Course.findByIdAndDelete(req.params.id)
+    res.redirect("/courses")
+  } catch (err) {
+    res.send("cannot delete course")
   }
-};
+}
