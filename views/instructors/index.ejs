@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Instructors</title>
+  </head>
+  <body>
+    <h1>Instructors</h1>
+
+    <a href="/instructors/new">Create New Instructor</a>
+
+    <ul>
+      <% if (instructors.length === 0) { %>
+        <li>No instructors yet</li>
+      <% } %>
+
+      <% instructors.forEach((i) => { %>
+        <li>
+          <a href="/instructors/<%= i._id %>"><%= i.name %></a>
+          - <%= i.email %>
+        </li>
+      <% }) %>
+    </ul>
+  </body>
+</html>

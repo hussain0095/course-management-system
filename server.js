@@ -1,24 +1,27 @@
-const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv").config();
+const express = require("express")
+const mongoose = require("mongoose")
+require("dotenv").config()
 
-const app = express();
+const app = express()
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }))
+app.set("view engine", "ejs")
 
-mongoose.connect(process.env.MONGODB_URI);
+async function connectToDB() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI)
+    console.log("Connected to Database")
+  } catch (err) {
+    console.log("DB Connection Error:", err)
+  }
+}
+connectToDB()
 
-mongoose.connection.on("connected", () => {
-  console.log("Connected to Database");
+app.get("/", (req, res) => {
+  res.send("HOME WORKS");
 });
 
-mongoose.connection.on("error", (err) => {
-  console.log("DB Connection Error:", err);
-});
+app.use("/instructors", require("./routes/instructors"))
+app.use("/courses", require("./routes/courses"))
 
-app.use("/instructors", require("./routes/instructors"));
-app.use("/courses", require("./routes/courses"));
-
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+app.listen(3000, () => console.log("Server running on port 3000"))

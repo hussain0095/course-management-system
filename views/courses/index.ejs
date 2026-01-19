@@ -1,0 +1,51 @@
+<h1>Courses</h1>
+
+<p>
+  <a href="/instructors">Go to Instructors</a>
+</p>
+
+<h2>Create New Course</h2>
+
+<form action="/courses" method="POST">
+  <div>
+    <label>Title</label>
+    <input name="title" required />
+  </div>
+
+  <div>
+    <label>Description</label>
+    <input name="description" />
+  </div>
+
+  <div>
+    <label>Price</label>
+    <input type="number" name="price" />
+  </div>
+
+  <div>
+    <label>Instructor</label>
+    <select name="instructor" required>
+      <% instructors.forEach((inst) => { %>
+        <option value="<%= inst._id %>"><%= inst.name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button type="submit">Create Course</button>
+</form>
+
+<hr />
+
+<h2>All Courses</h2>
+
+<ul>
+  <% courses.forEach((course) => { %>
+    <li>
+      <a href="/courses/<%= course._id %>"><%= course.title %></a>
+      -
+      <% if (course.instructor) { %>
+        <%= course.instructor.name %>
+      <% } %>
+    </li>
+  <% }) %>
+</ul>

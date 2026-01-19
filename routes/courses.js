@@ -1,18 +1,16 @@
-const express = require("express")
-const router = express.Router()
+const router = require("express").Router();
 
-const courses = require("../controllers/courses")
-const reviews = require("../controllers/reviews")
+const courses = require("../controllers/courses");
+const reviews = require("../controllers/reviews");
 
-router.post("/", courses.createCourse)
-router.get("/", courses.getAllCourses)
+router.post("/", courses.createCourse);
+router.get("/", courses.getAllCourses);
+router.get("/:id", courses.getCourseById);
 
-router.get("/:id", courses.getCourseById)
+router.post("/update/:id", courses.updateCourse);
+router.post("/delete/:id", courses.deleteCourse);
 
-router.post("/update/:id", courses.updateCourse)
-router.post("/delete/:id", courses.deleteCourse)
+router.post("/:id/reviews", reviews.addReview);
+router.get("/:id/reviews", reviews.getReviewsPage);
 
-router.post("/:id/reviews", reviews.addReview)
-router.get("/:id/reviews", reviews.getAllReviews)
-
-module.exports = router
+module.exports = router;

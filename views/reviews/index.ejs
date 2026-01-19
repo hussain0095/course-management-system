@@ -1,0 +1,21 @@
+<h1>Course Reviews</h1>
+
+<p><strong>Course:</strong> <%= course.title %></p>
+
+<p>
+  <a href="/courses/<%= course._id %>">Back to Course</a>
+</p>
+
+<hr />
+
+<ul>
+  <% course.reviews.forEach((rev) => { %>
+    <li>
+      <strong><%= rev.studentName %></strong>
+      - Rating: <%= rev.rating %>
+      <% if (rev.comment) { %>
+        - "<%= rev.comment %>"
+      <% } %>
+    </li>
+  <% }) %>
+</ul>

@@ -1,0 +1,100 @@
+<h1>Course Details</h1>
+
+<p><strong>Title:</strong> <%= course.title %></p>
+<p><strong>Description:</strong> <%= course.description %></p>
+<p><strong>Price:</strong> <%= course.price %></p>
+
+<p>
+  <strong>Instructor:</strong>
+  <% if (course.instructor) { %>
+    <%= course.instructor.name %>
+  <% } %>
+</p>
+
+<p>
+  <a href="/courses">Back to Courses</a>
+</p>
+
+<hr />
+
+<h2>Update Course</h2>
+
+<form action="/courses/update/<%= course._id %>" method="POST">
+  <div>
+    <label>Title</label>
+    <input name="title" value="<%= course.title %>" required />
+  </div>
+
+  <div>
+    <label>Description</label>
+    <input name="description" value="<%= course.description %>" />
+  </div>
+
+  <div>
+    <label>Price</label>
+    <input type="number" name="price" value="<%= course.price %>" />
+  </div>
+
+  <div>
+    <label>Instructor</label>
+    <select name="instructor" required>
+      <% instructors.forEach((inst) => { %>
+        <option
+          value="<%= inst._id %>"
+          <%= (course.instructor && String(inst._id) === String(course.instructor._id)) ? "selected" : "" %>
+        >
+          <%= inst.name %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button type="submit">Update</button>
+</form>
+
+<hr />
+
+<h2>Delete Course</h2>
+<form action="/courses/delete/<%= course._id %>" method="POST">
+  <button type="submit">Delete</button>
+</form>
+
+<hr />
+
+<h2>Reviews</h2>
+
+<p>
+  <a href="/courses/<%= course._id %>/reviews">View all reviews</a>
+</p>
+
+<ul>
+  <% course.reviews.forEach((rev) => { %>
+    <li>
+      <strong><%= rev.studentName %></strong>
+      - Rating: <%= rev.rating %>
+      <% if (rev.comment) { %>
+        - "<%= rev.comment %>"
+      <% } %>
+    </li>
+  <% }) %>
+</ul>
+
+<h3>Add Review</h3>
+<form action="/courses/<%= course._id %>/reviews" method="POST">
+  <div>
+    <label>Student Name</label>
+    <input name="studentName" required />
+  </div>
+
+  <div>
+    <label>Rating (1-5)</label>
+    <input type="number" name="rating" min="1" max="5" required />
+  </div>
+
+  <div>
+    <label>Comment</label>
+    <input name="comment" />
+  </div>
+
+  <button type="submit">Add Review</button>
+</form>

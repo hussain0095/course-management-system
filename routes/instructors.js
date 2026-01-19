@@ -1,12 +1,9 @@
-const express = require("express")
-const router = express.Router()
-const instructorController = require("../controllers/instructors")
+const router = require("express").Router();
+const c = require("../controllers/instructors");
 
-router.post("/", instructorController.createInstructor)
+router.get("/new", c.newInstructorForm);
+router.post("/", c.createInstructor);
+router.get("/", c.getAllInstructors);
+router.get("/:id", c.getInstructorById);
 
-router.get("/new", instructorController.newInstructor)
-router.get("/", instructorController.getAllInstructors)
-
-router.get("/:id", instructorController.getInstructorById)
-
-module.exports = router
+module.exports = router;

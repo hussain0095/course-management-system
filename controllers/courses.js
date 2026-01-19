@@ -1,62 +1,64 @@
 const Course = require("../models/Course")
 const Instructor = require("../models/Instructor")
 
-const getInstructors = async () => {
-  const instructors = await Instructor.find()
-  return instructors
-}
+
 
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate("instructor")
-    const instructors = await getInstructors()
-    res.render("courses/index.ejs", { courses, instructors })
+    const courses = await Course.find().populate("instructor");
+    const instructors = await Instructor.find();
+    res.render("courses/index.ejs", { courses, instructors });
   } catch (err) {
-    res.send("something went wrong")
+    res.send("cannot get courses");
   }
-}
+};
+
 
 exports.getCourseById = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id).populate("instructor")
-    if (!course) return res.send("course not found")
-    res.render("courses/show.ejs", { course })
+    const course = await Course.findById(req.params.id).populate("instructor");
+    const instructors = await Instructor.find();
+
+    if (!course) return res.send("course not found");
+
+    res.render("courses/show.ejs", { course, instructors });
   } catch (err) {
-    res.send("invalid id")
+    res.send("invalid course id");
   }
-}
+};
+
 
 exports.createCourse = async (req, res) => {
   try {
-    const inst = await Instructor.findById(req.body.instructor)
-    if (!inst) return res.send("instructor not found")
+    const exists = await Instructor.findById(req.body.instructor);
+    if (!exists) return res.send("instructor not found");
 
-    await Course.create(req.body)
-    res.redirect("/courses")
+    await Course.create(req.body);
+    res.redirect("/courses");
   } catch (err) {
-    res.send("cannot create course")
+    res.send("cannot create course");
   }
-}
+};
 
 exports.updateCourse = async (req, res) => {
   try {
     if (req.body.instructor) {
-      const inst = await Instructor.findById(req.body.instructor)
-      if (!inst) return res.send("instructor not found")
+      const exists = await Instructor.findById(req.body.instructor);
+      if (!exists) return res.send("instructor not found");
     }
 
-    await Course.findByIdAndUpdate(req.params.id, req.body)
-    res.redirect("/courses/" + req.params.id)
+    await Course.findByIdAndUpdate(req.params.id, req.body, { runValidators: true });
+    res.redirect(`/courses/${req.params.id}`);
   } catch (err) {
-    res.send("cannot update course")
+    res.send("cannot update course");
   }
-}
+};
 
 exports.deleteCourse = async (req, res) => {
   try {
-    await Course.findByIdAndDelete(req.params.id)
-    res.redirect("/courses")
+    await Course.findByIdAndDelete(req.params.id);
+    res.redirect("/courses");
   } catch (err) {
-    res.send("cannot delete course")
+    res.send("cannot delete course");
   }
-}
+};
